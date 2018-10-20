@@ -6,7 +6,7 @@ from scrapy.selector import Selector
 from scrapy.http import Request
 
 from tripadvisor.items import *
-#from tripadvisor.spiders.crawlerhelper import *
+from tripadvisor.spiders.crawlerhelper import *
 
 
 # Constants.
@@ -19,7 +19,7 @@ class TripAdvisorRestaurantBaseSpider(BaseSpider):
 	name = "tripadvisor"
 
 	allowed_domains = ["tripadvisor.com"]
-	base_uri = "http://www.tripadvisor.com"
+	base_uri = "http://www.tripadvisor.ru"
 	start_urls = [
 		base_uri + "/Restaurant_Review-g60763-d12015308-Reviews-Royal_35_Steakhouse-New_York_City_New_York.html"
 		#base_uri + "/RestaurantSearch?geo=60763&q=New+York+City%2C+New+York&cat=&pid="
@@ -32,12 +32,44 @@ class TripAdvisorRestaurantBaseSpider(BaseSpider):
 		tripadvisor_items = []
 
 		sel = Selector(response)
-		snode_restaurants = sel.xpath('//div[@id="EATERY_SEARCH_RESULTS"]/div[starts-with(@class, "listing")]')
+		print(sel)
+		print("WTF")
+		print("WTF")
+		print("WTF")
+		snode_restaurant = sel.xpath('//div[@id="taplc_location_detail_above_the_fold_restaurants_0"]')
+		print(snode_restaurant.extract())
+		print("WTF")
+		print("WTF")
+		print("WTF")
+
+		tripadvisor_item = TripAdvisorItem()
+
+		#tripadvisor_item['feedbacks_count'] = get_parsed_string(snode_restaurant, 'div[@class= "rating_and_popularity"]')
+		#/span/a[@class="property_title "]/@href')
+		#extracted_list = hxs.select(xpath).extract()
+		sel2 = Selector(text = snode_restaurant[0].extract())
+		tripadvisor_item['name'] = sel2.xpath('//h1/text()').extract_first()
+		tripadvisor_item['feedbacks_count'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span/div/a[@class="more"]/span/text()').extract_first()
+		tripadvisor_item['pos_number'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span[2]/div/span/b/span/text()').extract_first()
+
+
+
+
+		print("WTF2")
+		print(snode_restaurant)
+		print(tripadvisor_item['name'])
+		print(tripadvisor_item['feedbacks_count'])
+		print(tripadvisor_item['pos_number'])
+		print("WTF2")
 		
+
+
+
+
+
 		# Build item index.
 		for snode_restaurant in snode_restaurants:
-
-			tripadvisor_item = TripAdvisorItem()
+			#print(snode_restaurant)
 
 			tripadvisor_item['url'] = self.base_uri + clean_parsed_string(get_parsed_string(snode_restaurant, 'div[@class="quality easyClear"]/span/a[@class="property_title "]/@href'))
 			tripadvisor_item['name'] = clean_parsed_string(get_parsed_string(snode_restaurant, 'div[@class="quality easyClear"]/span/a[@class="property_title "]/text()'))
