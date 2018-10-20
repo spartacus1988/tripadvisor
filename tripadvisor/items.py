@@ -16,11 +16,9 @@ class TripAdvisorItem(scrapy.Item):
 	name = scrapy.Field()
 	feedbacks_count = scrapy.Field()
 	pos_number = scrapy.Field()
-
-	
-
-	url = scrapy.Field()
-	address = scrapy.Field()
-	avg_stars = scrapy.Field()
-	photos = scrapy.Field()
-	reviews = scrapy.Field()
+	href_city = scrapy.Field()
+	href_city_text = scrapy.Field()
+	field_with_ssss = scrapy.Field()
+	street_address = scrapy.Field() 
+	locality = scrapy.Field() 
+	phone = scrapy.Field() 
