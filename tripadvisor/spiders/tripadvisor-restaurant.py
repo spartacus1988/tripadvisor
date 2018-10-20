@@ -32,29 +32,24 @@ class TripAdvisorRestaurantBaseSpider(BaseSpider):
 		tripadvisor_items = []
 
 		sel = Selector(response)
-		print(sel)
-		print("WTF")
+		#print("WTF")
 		snode_restaurant = sel.xpath('//div[@id="taplc_location_detail_above_the_fold_restaurants_0"]')
-		print(snode_restaurant.extract())
-		print("WTF")
-
+		#print(snode_restaurant.extract())
+		#print("WTF")
 		tripadvisor_item = TripAdvisorItem()
 
-		#tripadvisor_item['feedbacks_count'] = get_parsed_string(snode_restaurant, 'div[@class= "rating_and_popularity"]')
-		#/span/a[@class="property_title "]/@href')
-		#extracted_list = hxs.select(xpath).extract()
 		sel2 = Selector(text = snode_restaurant[0].extract())
-		tripadvisor_item['name'] = sel2.xpath('//h1/text()').extract_first()
-		tripadvisor_item['feedbacks_count'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span/div/a[@class="more"]/span/text()').extract_first()
+	
+		tripadvisor_item['name'] = clean_parsed_string(get_parsed_string(sel2, '//h1/text()'))
+		tripadvisor_item['feedbacks_count'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "rating_and_popularity"]/span/div/a[@class="more"]/span/text()'))
+		tripadvisor_item['pos_number'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "rating_and_popularity"]/span[2]/div/span/b/span/text()'))
+		tripadvisor_item['href_city'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "rating_and_popularity"]/span[2]/div/span/a/@href'))
+		tripadvisor_item['href_city_text'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "rating_and_popularity"]/span[2]/div/span/a/text()'))
+		tripadvisor_item['field_with_ssss'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "rating_and_popularity"]/span[3]/text()'))
+		tripadvisor_item['street_address'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "prw_rup prw_common_atf_header_bl headerBL"]/div/div/span[@class="street-address"]/text()'))
+		tripadvisor_item['locality'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "prw_rup prw_common_atf_header_bl headerBL"]/div/div/span[@class="locality"]/text()'))
+		tripadvisor_item['phone'] = clean_parsed_string(get_parsed_string(sel2, '//div[@class= "blRow"]/div[@class= "blEntry phone"]/span[2]/text()'))
 
-		tripadvisor_item['pos_number'] = clean_parsed_string(sel2.xpath('//div[@class= "rating_and_popularity"]/span[2]/div/span/b/span/text()').extract_first())
-		
-		tripadvisor_item['href_city'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span[2]/div/span/a/@href').extract_first()
-		tripadvisor_item['href_city_text'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span[2]/div/span/a/text()').extract_first()
-		tripadvisor_item['field_with_ssss'] = sel2.xpath('//div[@class= "rating_and_popularity"]/span[3]/text()').extract_first()
-		tripadvisor_item['street_address'] = sel2.xpath('//div[@class= "prw_rup prw_common_atf_header_bl headerBL"]/div/div/span[@class="street-address"]/text()').extract_first()
-		tripadvisor_item['locality'] = sel2.xpath('//div[@class= "prw_rup prw_common_atf_header_bl headerBL"]/div/div/span[@class="locality"]/text()').extract_first()
-		tripadvisor_item['phone'] = sel2.xpath('//div[@class= "blRow"]/div[@class= "blEntry phone"]/span[2]/text()').extract_first()
 		 
 		print("WTF2")
 		print(snode_restaurant)
