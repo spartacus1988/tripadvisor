@@ -6,6 +6,7 @@ from scrapy.selector import Selector
 from scrapy.http import Request
 
 from tripadvisor.items import *
+from tripadvisor.pipelines import *
 from tripadvisor.spiders.crawlerhelper import *
 
 
@@ -65,6 +66,8 @@ class TripAdvisorRestaurantBaseSpider(BaseSpider):
 		print("WTF2")
 
 		yield tripadvisor_item
+		MySQL = MySQLStorePipeline()
+		MySQL.process_item(tripadvisor_item)
 		
 
 
