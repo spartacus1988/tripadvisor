@@ -68,6 +68,7 @@ class TripAdvisorRestaurantBaseSpider(BaseSpider):
 		yield tripadvisor_item
 		MySQL = MySQLStorePipeline()
 		MySQL.process_item(tripadvisor_item)
+		MySQL.show_item()
 		
 
 

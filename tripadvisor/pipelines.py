@@ -34,73 +34,24 @@ class MySQLStorePipeline(object):
 
 	def create_table(self, TABLE_NM):
 		result_table = self.cursor.execute('SELECT table_name FROM information_schema.tables WHERE table_schema = "' + NAME_DB + '" AND table_name = "'+ TABLE_NM +'";')
-
-
-
-		# value = header[0] +' varchar(250), ' + header[1] + ' int , ' + header[2] +' int );'
-
-
-		# mycursor.execute("CREATE TABLE customers (name VARCHAR(255), address VARCHAR(255))")
-
-		value = """"id INT(11) NOT NULL AUTO_INCREMENT, 
-					name VARCHAR(255) NOT NULL,
-					feedbacks_count VARCHAR(255) NOT NULL,
-					pos_number VARCHAR(255) NOT NULL,
-					href_city VARCHAR(255) NOT NULL,
-					href_city_text VARCHAR(255) NOT NULL,
-					field_with_ssss VARCHAR(255) NOT NULL,
-					street_address VARCHAR(255) NOT NULL,
-					locality VARCHAR(255) NOT NULL,
-					phone VARCHAR(255) NOT NULL,
-					PRIMARY KEY(id)"""
-
-		# STRING = 'CREATE TABLE IF NOT EXISTS ' + TABLE_NM + '( ' 
-		# 			+ 'id INT(11) NOT NULL AUTO_INCREMENT, '  
-		# 			+ 'name VARCHAR(255) NOT NULL, '
-		# 			+ 'feedbacks_count VARCHAR(255) NOT NULL, '
-		# 			+ 'pos_number VARCHAR(255) NOT NULL, '
-		# 			+ 'href_city VARCHAR(255) NOT NULL, '
-		# 			+ 'href_city_text VARCHAR(255) NOT NULL, '
-		# 			+ 'field_with_ssss VARCHAR(255) NOT NULL, '
-		# 			+ 'street_address VARCHAR(255) NOT NULL, '
-		# 			+ 'locality VARCHAR(255) NOT NULL, '
-		# 			+ 'phone VARCHAR(255) NOT NULL, '
-		# 			+ 'PRIMARY KEY(id)' + ' )' 
-
-
-		# STRING = ('CREATE TABLE IF NOT EXISTS ' + TABLE_NM + '( ' 
-		# 			+ 'id INT(11) NOT NULL AUTO_INCREMENT, '  
-		# 			+ 'name VARCHAR(255) NOT NULL, '
-		# 			+ 'feedbacks_count VARCHAR(255) NOT NULL, '
-		# 			+ 'pos_number VARCHAR(255) NOT NULL, '
-		# 			+ 'href_city VARCHAR(255) NOT NULL, '
-		# 			+ 'href_city_text VARCHAR(255) NOT NULL, '
-		# 			+ 'field_with_ssss VARCHAR(255) NOT NULL, '
-		# 			+ 'street_address VARCHAR(255) NOT NULL, '
-		# 			+ 'locality VARCHAR(255) NOT NULL, '
-		# 			+ 'phone VARCHAR(255) NOT NULL, '
-		# 			+ 'PRIMARY KEY(id)' + ' )')
-
-
 		STRING= ( "CREATE TABLE IF NOT EXISTS " + TABLE_NM + "( "
 			    "  `id` int(11) NOT NULL AUTO_INCREMENT,"
 			    "  `name` VARCHAR(255) NOT NULL,"
 			    "  `feedbacks_count` VARCHAR(255) NOT NULL,"
-			    "  `pos_number` VARCHAR(255) NOT NULL,"
-			    "  `href_city` VARCHAR(255) NOT NULL,"
-			    "  `href_city_text` VARCHAR(255) NOT NULL,"
-			    "  `field_with_ssss` VARCHAR(255) NOT NULL,"
-			    "  `street_address` VARCHAR(255) NOT NULL,"
-			    "  `locality` VARCHAR(255) NOT NULL,"
+			    "  `pos_number` TEXT NOT NULL,"
+			    "  `href_city` TEXT NOT NULL,"
+			    "  `href_city_text` TEXT NOT NULL,"
+			    "  `field_with_ssss` TEXT NOT NULL,"
+			    "  `street_address` TEXT NOT NULL,"
+			    "  `locality` TEXT NOT NULL,"
 			    "  `phone` VARCHAR(255) NOT NULL,"
 			    "  PRIMARY KEY (`id`)"
 			    ")"
 			    )
 
-		print(STRING)
+		#print(STRING)
 
 		if result_table == 0:
-			#self.cursor.execute('CREATE TABLE IF NOT EXISTS ' + TABLE_NM + '( ' + value + ' )')
 			self.cursor.execute(STRING)
 			return 0
 		else:
@@ -111,19 +62,28 @@ class MySQLStorePipeline(object):
 
 	def process_item(self, item):    
 		try:
-			#self.cursor.execute("INSERT INTO "+ TABLE_NM + " VALUES (' " + tbody[k-1] +"',"+tbody[k] +","+tbody[k+1] + " );")
-			self.cursor.execute("INSERT INTO "+ TABLE_NM + " VALUES (' " + item['name'] +"',"
-				+ item['feedbacks_count'] + "," 
-				+ item['pos_number'] + ","
-				+ item['href_city'] + ","
-				+ item['href_city_text'] + ","
-				+ item['field_with_ssss'] + ","
-				+ item['street_address'] + ","
-				+ item['locality'] + ","
-				+ item['phone'] + ","
-				+ " );")
+			add_restaurant = ("INSERT INTO "+ TABLE_NM + " "
+               "(name, feedbacks_count, pos_number, href_city, href_city_text, field_with_ssss, street_address, locality, phone) "
+               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+			data_restaurant = (item['name'], item['feedbacks_count'], item['pos_number'], item['href_city'], 
+				item['href_city_text'], item['field_with_ssss'], item['street_address'], item['locality'], item['phone'])
 
+			# Insert new restaurant
+			self.cursor.execute(add_restaurant, data_restaurant)
 			self.conn.commit()            
+		except MySQLdb.Error as e:
+			print(e)
+
+	def show_item(self):
+		try:
+			query = ('select * from '+ TABLE_NM )
+
+			self.cursor.execute(query)
+			output = self.cursor.fetchall()
+
+			for row in output:
+				print (row)
+
 		except MySQLdb.Error as e:
 			print(e)
 
